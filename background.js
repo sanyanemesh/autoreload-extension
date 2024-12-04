@@ -2,13 +2,12 @@ let activeTabId = null; // ID of the matched tab
 let intervalId = null; // ID for the reload interval
 let targetUrlPart = ""; // User-defined URL or part of URL to match
 
-
+// Utility function to calculate a random interval based on the formula
 function getRandomizedInterval(baseInterval) {
   const startValue = baseInterval * 0.5;
   const endValue = baseInterval * 1.5;
   return Math.floor(Math.random() * (endValue - startValue + 1) + startValue);
 }
-
 
 // Utility function to start the auto-reload timer
 function startAutoReload() {
@@ -31,9 +30,21 @@ function startAutoReload() {
       return;
     }
 
-    console.log(`Starting auto-reload for tab ${activeTabId} with a ${timer}s interval.`);
-    clearInterval(intervalId);
-    intervalId = setInterval(() => {
+    // Prevent multiple intervals
+    if (intervalId) {
+      // console.log("Auto-reload is already active. Skipping redundant start.");
+      return;
+    }
+
+    console.log(`Starting auto-reload for tab ${activeTabId} with base interval: ${timer}s.`);
+
+    // Reload function with random interval logic
+    const reloadTab = () => {
+      const baseInterval = timer * 1000; // Convert seconds to milliseconds
+      const randomizedInterval = getRandomizedInterval(baseInterval);
+
+      console.log(`Next reload in ${randomizedInterval}ms.`);
+
       chrome.tabs.get(activeTabId, (tab) => {
         if (chrome.runtime.lastError || !tab) {
           console.log("Error or tab closed. Stopping auto-reload.");
@@ -50,26 +61,33 @@ function startAutoReload() {
           }
         });
       });
-    }, timer * 1000);
+
+      // Schedule the next reload with the randomized interval
+      intervalId = setTimeout(reloadTab, randomizedInterval);
+    };
+
+    // Start the first reload immediately
+    reloadTab();
   });
 }
 
+
 // Utility function to stop the auto-reload timer and reset settings
 function stopAutoReload() {
-  console.log("Stopping auto-reload.");
-  clearInterval(intervalId);
-  intervalId = null;
-  activeTabId = null;
-
-  // Reset settings to defaults
-  chrome.storage.local.set({
-    enabled: false,
-    timer: 10,
-    timerEnabled: false,
-    targetUrlPart: "",
-  }, () => {
-    console.log("Settings reset to defaults.");
-  });
+  if (intervalId) {
+    console.log("Stopping auto-reload.");
+    clearInterval(intervalId);
+    intervalId = null;
+    targetUrlPart=""
+    chrome.storage.local.set({
+      enabled: false,
+      timer: 10,
+      timerEnabled: false,
+      targetUrlPart: "",
+    }, () => {
+      console.log("Settings reset to defaults.");
+    });
+  }
 }
 
 // Listen for tab updates (e.g., URL changes)
