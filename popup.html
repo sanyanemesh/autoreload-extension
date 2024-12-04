@@ -1,33 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autoreload Page</title>
-  <script src="popup.js" defer></script>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>Autoreload Page</h1>
-  <label>
-    <input type="checkbox" id="extensionToggle">
-    Enable Extension
-  </label>
-  <br>
-  <label>
-    Timer (seconds): 
-    <input type="number" id="timerInput" min="1" value="10">
-  </label>
-  <br>
-  <label>
-    <input type="checkbox" id="timerToggle">
-    Enable Timer
-  </label>
-  <br>
-  <label>
-    Target URL (or part of URL): 
-    <input type="text" id="targetUrlInput" placeholder="Enter URL part">
-  </label>
-  <br>
-  <button id="saveButton">Save</button>
+  <div class="popup-container">
+    <label for="url">Target URL:</label>
+    <input type="text" id="url" placeholder="Enter URL to match..." />
+
+    <label for="timer">Reload Interval (seconds):</label>
+    <input type="number" id="timer" min="1" value="10" />
+
+    <div class="checkbox-container">
+      <input type="checkbox" id="toggle-timer" />
+      <label for="toggle-timer">Enable Auto Reload</label>
+    </div>
+
+    <button id="save-settings">Save Settings</button>
+  </div>
+  <script src="popup.js"></script>
 </body>
 </html>
