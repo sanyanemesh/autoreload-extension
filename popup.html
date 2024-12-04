@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autoreload Page</title>
+  <script src="popup.js" defer></script>
+</head>
+<body>
+  <h1>Autoreload Page</h1>
+  <label>
+    <input type="checkbox" id="extensionToggle">
+    Enable Extension
+  </label>
+  <br>
+  <label>
+    Timer (seconds): 
+    <input type="number" id="timerInput" min="1" value="10">
+  </label>
+  <br>
+  <label>
+    <input type="checkbox" id="timerToggle">
+    Enable Timer
+  </label>
+  <br>
+  <label>
+    Target URL (or part of URL): 
+    <input type="text" id="targetUrlInput" placeholder="Enter URL part">
+  </label>
+  <br>
+  <button id="saveButton">Save</button>
+</body>
+</html>

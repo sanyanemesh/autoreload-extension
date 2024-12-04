@@ -1,0 +1,35 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 1em;
+  background: #f4f4f4;
+}
+.container {
+  max-width: 300px;
+  margin: 0 auto;
+}
+h1 {
+  font-size: 1.5em;
+  text-align: center;
+}
+label {
+  display: block;
+  margin: 10px 0;
+}
+input[type="checkbox"], input[type="number"] {
+  margin-left: 10px;
+}
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #0056b3;
+}
