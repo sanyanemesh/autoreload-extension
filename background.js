@@ -1,16 +1,14 @@
-let intervalId = null; // ID for the reload interval
-let url = ""; // User-defined URL or part of URL to match
+let intervalId = null;
+let url = "";
 let AllTabs = [];
 let match = null;
 
-// Utility function to calculate a random interval based on the formula
 function getRandomizedInterval(baseInterval) {
   const startValue = baseInterval * 0.5;
   const endValue = baseInterval * 1.5;
   return Math.floor(Math.random() * (endValue - startValue + 1) + startValue);
 }
 
-// Utility function to start the auto-reload timer
 function startAutoReload() {
   chrome.storage.local.get(["timer", "timerEnabled", "url"], (data) => {
     const { timer = 10, timerEnabled, url: savedUrlPart } = data;
@@ -26,17 +24,12 @@ function startAutoReload() {
       return;
     }
 
-    // Prevent multiple intervals
     if (intervalId) {
-      // console.log("Auto-reload is already active. Skipping redundant start.");
       return;
     }
 
-    console.log(`Starting auto-reload for tab ${match?.id} with base interval: ${timer}s.`);
-
-    // Reload function with random interval logic
     const reloadTab = () => {
-      const baseInterval = timer * 1000; // Convert seconds to milliseconds
+      const baseInterval = timer * 1000;
       const randomizedInterval = getRandomizedInterval(baseInterval);
 
       console.log(`Next reload in ${randomizedInterval}ms.`);
@@ -57,17 +50,12 @@ function startAutoReload() {
           }
         });
       });
-
-      // Schedule the next reload with the randomized interval
       intervalId = setTimeout(reloadTab, randomizedInterval);
     };
-
-    // Start the first reload immediately
     reloadTab();
   });
 }
 
-// Utility function to stop the auto-reload timer and reset settings
 function stopAutoReload() {
   if (intervalId) {
     console.log("Stopping auto-reload.");
@@ -79,20 +67,16 @@ function stopAutoReload() {
       timer: 10,
       timerEnabled: false,
       url: "",
-    }, () => {
-      console.log("Settings reset to defaults.");
     });
   }
 }
 
-// Listen for tab updates (e.g., URL changes)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   chrome.storage.local.get(["url"], (data) => {
     url = data.url || "";
 
     if (url && tab.url?.includes(url)) {
       match = {id: tabId, url: match.url};
-      // Auto-reload logic ensures timer starts after matching tab found
       chrome.storage.local.get(["timerEnabled"], (data) => {
         if (data.timerEnabled) {
           startAutoReload();
@@ -102,7 +86,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   });
 });
 
-// Handle tab closure
 chrome.tabs.onRemoved.addListener((tabId) => {
   if (tabId === match?.id) {
     console.log(`Matched tab ${tabId} closed. Stopping auto-reload.`);
@@ -111,7 +94,6 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   }
 });
 
-// Handle settings changes
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.timerEnabled || changes.timer || changes.url) {
     console.log("Settings changed:", changes);
@@ -125,14 +107,11 @@ chrome.storage.onChanged.addListener((changes) => {
         stopAutoReload();
       }
     });
-  } else {
-    console.log("nothing changed")
   }
   chrome.runtime.sendMessage({ action: "closePopup" });
 });
 
 function listAllTabsInWindow() {
-  // Query all tabs in the current window
   chrome.tabs.query({ currentWindow: true }, (tabs) => {
     if(!match) {
       let tabsArr = []
